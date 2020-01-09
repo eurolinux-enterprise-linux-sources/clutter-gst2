@@ -59,11 +59,6 @@
 #include <gst/video/navigation.h>
 #include <gst/riff/riff-ids.h>
 
-#ifdef CLUTTER_WINDOWING_X11
-#include <cogl/cogl-texture-pixmap-x11.h>
-#include <clutter/x11/clutter-x11.h>
-#endif
-
 #ifdef HAVE_HW_DECODER_SUPPORT
 #define GST_USE_UNSTABLE_API 1
 #include <gst/video/gstsurfacemeta.h>
@@ -94,52 +89,15 @@ static gchar *ayuv_to_rgba_shader =
     "  color.b = y + 2.015625 * u;"
     "  cogl_color_out = color;}";
 
-static gchar *nv12_to_rgba_shader =
-    "uniform sampler2D ytex;"
-    "uniform sampler2D utex;"
-    "void main () {"
-    "  vec2 coord = vec2(cogl_tex_coord_in[0]);"
-    "  float y = 1.1640625 * (texture2D (ytex, coord).a - 0.0625);"
-    "  float uvr = int (texture2D (utex, coord).r * 32);"
-    "  float uvg = int (texture2D (utex, coord).g * 64);"
-    "  float uvb = int (texture2D (utex, coord).b * 32);"
-    "  float tg = floor (uvg / 8.0);"
-    "  float u = (uvb + (uvg - tg * 8.0) * 32.0) / 256.0;"
-    "  float v = (uvr * 8.0 + tg) / 256.0;"
-    "  u -= 0.5;"
-    "  v -= 0.5;"
-    "  vec4 color;"
-    "  color.r = y + 1.59765625 * v;"
-    "  color.g = y - 0.390625 * u - 0.8125 * v;"
-    "  color.b = y + 2.015625 * u;"
-    "  color.a = 1.0;"
-    "  cogl_color_out = color;}";
-
 static gchar *yv12_to_rgba_shader =
     "uniform sampler2D ytex;"
     "uniform sampler2D utex;"
     "uniform sampler2D vtex;"
     "void main () {"
     "  vec2 coord = vec2(cogl_tex_coord_in[0]);"
-    "  float y = 1.1640625 * (texture2D (ytex, coord).a - 0.0625);"
-    "  float v = texture2D (utex, coord).a - 0.5;"
-    "  float u = texture2D (vtex, coord).a - 0.5;"
-    "  vec4 color;"
-    "  color.r = y + 1.59765625 * v;"
-    "  color.g = y - 0.390625 * u - 0.8125 * v;"
-    "  color.b = y + 2.015625 * u;"
-    "  color.a = 1.0;"
-    "  cogl_color_out = color;}";
-
-static gchar *i420_to_rgba_shader =
-    "uniform sampler2D ytex;"
-    "uniform sampler2D utex;"
-    "uniform sampler2D vtex;"
-    "void main () {"
-    "  vec2 coord = vec2(cogl_tex_coord_in[0]);"
-    "  float y = 1.1640625 * (texture2D (ytex, coord).a - 0.0625);"
-    "  float u = texture2D (utex, coord).a - 0.5;"
-    "  float v = texture2D (vtex, coord).a - 0.5;"
+    "  float y = 1.1640625 * (texture2D (ytex, coord).g - 0.0625);"
+    "  float u = texture2D (utex, coord).g - 0.5;"
+    "  float v = texture2D (vtex, coord).g - 0.5;"
     "  vec4 color;"
     "  color.r = y + 1.59765625 * v;"
     "  color.g = y - 0.390625 * u - 0.8125 * v;"
@@ -149,28 +107,19 @@ static gchar *i420_to_rgba_shader =
 
 #define BASE_SINK_CAPS "{ AYUV," \
                        "YV12," \
-                       "NV12," \
                        "I420," \
                        "RGBA," \
                        "BGRA," \
                        "RGB," \
                        "BGR }"
 
-#define BASE_GL_SINK_CAPS "{ RGBA }"
-
-#define GL_SINK_CAPS GST_VIDEO_CAPS_MAKE_WITH_FEATURES(     \
-    GST_CAPS_FEATURE_META_GST_VIDEO_GL_TEXTURE_UPLOAD_META, \
-    BASE_GL_SINK_CAPS)
 
 #define SINK_CAPS GST_VIDEO_CAPS_MAKE(BASE_SINK_CAPS)
 
 static GstStaticPadTemplate sinktemplate_all = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS (
-        GL_SINK_CAPS ";"
-        SINK_CAPS
-    ));
+    GST_STATIC_CAPS (SINK_CAPS));
 
 GST_DEBUG_CATEGORY_STATIC (clutter_gst_video_sink_debug);
 #define GST_CAT_DEFAULT clutter_gst_video_sink_debug
@@ -190,10 +139,8 @@ typedef enum
   CLUTTER_GST_RGB24,
   CLUTTER_GST_AYUV,
   CLUTTER_GST_YV12,
-  CLUTTER_GST_NV12,
   CLUTTER_GST_I420,
-  CLUTTER_GST_SURFACE,
-  CLUTTER_GST_GL_TEXTURE_UPLOAD,
+  CLUTTER_GST_SURFACE
 } ClutterGstVideoFormat;
 
 /*
@@ -221,7 +168,6 @@ typedef struct _ClutterGstSource
   GstBuffer *buffer;
   gboolean has_new_caps;
   gboolean stage_lost;
-  gboolean has_gl_texture_upload_meta;
 } ClutterGstSource;
 
 /*
@@ -237,7 +183,6 @@ typedef struct _ClutterGstRenderer
   ClutterGstVideoFormat format; /* the format handled by this renderer */
   int flags;                    /* ClutterGstFeatures ORed flags */
   GstStaticCaps caps;           /* caps handled by the renderer */
-  gpointer context;             /* rendering context if any */
 
   void (*init) (ClutterGstVideoSink * sink);
   void (*deinit) (ClutterGstVideoSink * sink);
@@ -266,16 +211,8 @@ struct _ClutterGstVideoSinkPrivate
 
   GArray *signal_handler_ids;
 
-  GstVideoCropMeta crop_meta;
-  gboolean has_crop_meta;
-  gboolean crop_meta_has_changed;
-
 #ifdef HAVE_HW_DECODER_SUPPORT
   GstSurfaceConverter *converter;
-
-#ifdef CLUTTER_WINDOWING_X11
-  Pixmap pixmap;
-#endif
 #endif
 };
 
@@ -397,9 +334,6 @@ clutter_gst_parse_caps (GstCaps * caps,
     case GST_VIDEO_FORMAT_YV12:
       format = CLUTTER_GST_YV12;
       break;
-    case GST_VIDEO_FORMAT_NV12:
-      format = CLUTTER_GST_NV12;
-      break;
     case GST_VIDEO_FORMAT_I420:
       format = CLUTTER_GST_I420;
       break;
@@ -429,9 +363,6 @@ clutter_gst_parse_caps (GstCaps * caps,
     default:
       goto unhandled_format;
   }
-
-  if (priv->source->has_gl_texture_upload_meta)
-    format = CLUTTER_GST_GL_TEXTURE_UPLOAD;
 
   /* find a renderer that can display our format */
   renderer = clutter_gst_find_renderer_by_format (sink, format);
@@ -533,8 +464,6 @@ static gboolean
 clutter_gst_source_dispatch (GSource * source,
     GSourceFunc callback, gpointer user_data)
 {
-  GstVideoCropMeta *crop_meta;
-  GstVideoGLTextureUploadMeta *upload_meta;
   ClutterGstSource *gst_source = (ClutterGstSource *) source;
   ClutterGstVideoSinkPrivate *priv = gst_source->sink->priv;
   GstBuffer *buffer;
@@ -542,37 +471,6 @@ clutter_gst_source_dispatch (GSource * source,
   GST_DEBUG ("In dispatch");
 
   g_mutex_lock (&gst_source->buffer_lock);
-
-#ifdef CLUTTER_COGL_HAS_GL
-  if (!gst_source->has_gl_texture_upload_meta &&
-      (upload_meta = gst_buffer_get_video_gl_texture_upload_meta (gst_source->buffer))) {
-    if (priv->renderer)
-      priv->renderer->deinit (gst_source->sink);
-
-    priv->renderer = clutter_gst_find_renderer_by_format (gst_source->sink,
-        CLUTTER_GST_GL_TEXTURE_UPLOAD);
-
-    gst_source->has_gl_texture_upload_meta = TRUE;
-  }
-#endif
-
-  crop_meta = gst_buffer_get_video_crop_meta (gst_source->buffer);
-  if (crop_meta) {
-    priv->has_crop_meta = TRUE;
-
-    if (priv->crop_meta.x      == crop_meta->x     &&
-        priv->crop_meta.y      == crop_meta->y     &&
-        priv->crop_meta.width  == crop_meta->width &&
-        priv->crop_meta.height == crop_meta->height) {
-      priv->crop_meta_has_changed = FALSE;
-    } else {
-      priv->crop_meta.x = crop_meta->x;
-      priv->crop_meta.y = crop_meta->y;
-      priv->crop_meta.width = crop_meta->width;
-      priv->crop_meta.height = crop_meta->height;
-      priv->crop_meta_has_changed = TRUE;
-    }
-  }
 
   if (G_UNLIKELY (gst_source->has_new_caps)) {
     GstCaps *caps =
@@ -613,12 +511,7 @@ clutter_gst_source_dispatch (GSource * source,
       /* FIXME : We already call this above ? */
       if (!clutter_gst_parse_caps (caps, gst_source->sink, TRUE))
         goto negotiation_fail;
-
-      if (priv->has_crop_meta)
-        clutter_actor_set_size (stage,
-            priv->crop_meta.width, priv->crop_meta.height);
-      else
-        clutter_actor_set_size (stage, priv->info.width, priv->info.height);
+      clutter_actor_set_size (stage, priv->info.width, priv->info.height);
       clutter_actor_show (stage);
     } else {
       /* FIXME : We already call this above ? */
@@ -781,29 +674,6 @@ _create_cogl_program (const char *source)
   return program;
 }
 
-static CoglHandle
-_get_cached_cogl_program (const char *source)
-{
-  static GHashTable *program_cache = NULL;
-  CoglHandle handle;
-
-  if (G_UNLIKELY (program_cache == NULL)) {
-    program_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                           (GDestroyNotify) g_free,
-                                           (GDestroyNotify) cogl_handle_unref);
-  }
-
-  handle = (CoglHandle) g_hash_table_lookup (program_cache, (gpointer) source);
-  if (handle == COGL_INVALID_HANDLE) {
-    handle = _create_cogl_program (source);
-    g_hash_table_insert (program_cache,
-                         (gpointer) g_strdup (source),
-                         (gpointer) cogl_handle_ref (handle));
-  }
-
-  return handle;
-}
-
 static void
 _create_template_material (ClutterGstVideoSink * sink,
     const char *source, gboolean set_uniforms, int n_layers)
@@ -818,7 +688,7 @@ _create_template_material (ClutterGstVideoSink * sink,
   template = cogl_material_new ();
 
   if (source) {
-    CoglHandle program = _get_cached_cogl_program (source);
+    CoglHandle program = _create_cogl_program (source);
 
     if (set_uniforms) {
       unsigned int location;
@@ -840,6 +710,7 @@ _create_template_material (ClutterGstVideoSink * sink,
     }
 
     cogl_material_set_user_program (template, program);
+    cogl_handle_unref (program);
   }
 
   for (i = 0; i < n_layers; i++)
@@ -905,13 +776,10 @@ clutter_gst_rgb24_upload (ClutterGstVideoSink * sink, GstBuffer * buffer)
   if (!gst_video_frame_map (&frame, &priv->info, buffer, GST_MAP_READ))
     goto map_fail;
 
-  tex = cogl_texture_new_from_data (GST_VIDEO_FRAME_COMP_WIDTH (&frame, 0),
-      GST_VIDEO_FRAME_COMP_HEIGHT (&frame, 0),
+  tex = cogl_texture_new_from_data (priv->info.width,
+      priv->info.height,
       CLUTTER_GST_TEXTURE_FLAGS,
-      format,
-      format,
-      GST_VIDEO_FRAME_PLANE_STRIDE (&frame, 0),
-      GST_VIDEO_FRAME_PLANE_DATA (&frame, 0));
+      format, format, priv->info.stride[0], frame.data[0]);
 
   gst_video_frame_unmap (&frame);
 
@@ -932,7 +800,6 @@ static ClutterGstRenderer rgb24_renderer = {
   CLUTTER_GST_RGB24,
   0,
   GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("{ RGB, BGR }")),
-  NULL,
   clutter_gst_rgb_init,
   clutter_gst_dummy_deinit,
   clutter_gst_rgb24_upload,
@@ -958,13 +825,10 @@ clutter_gst_rgb32_upload (ClutterGstVideoSink * sink, GstBuffer * buffer)
   else
     format = COGL_PIXEL_FORMAT_RGBA_8888;
 
-  tex = cogl_texture_new_from_data (GST_VIDEO_FRAME_COMP_WIDTH (&frame, 0),
-      GST_VIDEO_FRAME_COMP_HEIGHT (&frame, 0),
+  tex = cogl_texture_new_from_data (priv->info.width,
+      priv->info.height,
       CLUTTER_GST_TEXTURE_FLAGS,
-      format,
-      format,
-      GST_VIDEO_FRAME_PLANE_STRIDE (&frame, 0),
-      GST_VIDEO_FRAME_PLANE_DATA (&frame, 0));
+      format, format, priv->info.stride[0], frame.data[0]);
 
   gst_video_frame_unmap (&frame);
 
@@ -985,7 +849,6 @@ static ClutterGstRenderer rgb32_renderer = {
   CLUTTER_GST_RGB32,
   0,
   GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("{ RGBA, BGRA }")),
-  NULL,
   clutter_gst_rgb_init,
   clutter_gst_dummy_deinit,
   clutter_gst_rgb32_upload,
@@ -1000,28 +863,34 @@ static ClutterGstRenderer rgb32_renderer = {
 static gboolean
 clutter_gst_yv12_upload (ClutterGstVideoSink * sink, GstBuffer * buffer)
 {
-  int i;
-  CoglHandle texs[3];
-  GstVideoFrame frame;
   ClutterGstVideoSinkPrivate *priv = sink->priv;
+  CoglHandle y_tex, u_tex, v_tex;
+  GstVideoFrame frame;
 
   if (!gst_video_frame_map (&frame, &priv->info, buffer, GST_MAP_READ))
     goto no_map;
 
-  for (i = 0; i < 3; i++) {
-    texs[i] =
-      cogl_texture_new_from_data (GST_VIDEO_FRAME_COMP_WIDTH (&frame, i),
-      GST_VIDEO_FRAME_COMP_HEIGHT (&frame, i),
-      CLUTTER_GST_TEXTURE_FLAGS,
-      COGL_PIXEL_FORMAT_A_8,
-      COGL_PIXEL_FORMAT_A_8,
-      GST_VIDEO_FRAME_PLANE_STRIDE (&frame, i),
-      GST_VIDEO_FRAME_PLANE_DATA (&frame, i));
-  }
+  y_tex =
+      cogl_texture_new_from_data (GST_VIDEO_INFO_COMP_WIDTH (&priv->info, 0),
+      GST_VIDEO_INFO_COMP_HEIGHT (&priv->info, 0), CLUTTER_GST_TEXTURE_FLAGS,
+      COGL_PIXEL_FORMAT_G_8, COGL_PIXEL_FORMAT_G_8, priv->info.stride[0],
+      frame.data[0]);
+
+  u_tex =
+      cogl_texture_new_from_data (GST_VIDEO_INFO_COMP_WIDTH (&priv->info, 1),
+      GST_VIDEO_INFO_COMP_HEIGHT (&priv->info, 1), CLUTTER_GST_TEXTURE_FLAGS,
+      COGL_PIXEL_FORMAT_G_8, COGL_PIXEL_FORMAT_G_8, priv->info.stride[1],
+      frame.data[1]);
+
+  v_tex =
+      cogl_texture_new_from_data (GST_VIDEO_INFO_COMP_WIDTH (&priv->info, 2),
+      GST_VIDEO_INFO_COMP_HEIGHT (&priv->info, 2), CLUTTER_GST_TEXTURE_FLAGS,
+      COGL_PIXEL_FORMAT_G_8, COGL_PIXEL_FORMAT_G_8, priv->info.stride[2],
+      frame.data[2]);
 
   gst_video_frame_unmap (&frame);
 
-  _create_paint_material (sink, texs[0], texs[1], texs[2]);
+  _create_paint_material (sink, y_tex, u_tex, v_tex);
 
   return TRUE;
 
@@ -1045,88 +914,9 @@ static ClutterGstRenderer yv12_glsl_renderer = {
   CLUTTER_GST_YV12,
   CLUTTER_GST_GLSL | CLUTTER_GST_MULTI_TEXTURE,
   GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("YV12")),
-  NULL,
   clutter_gst_yv12_glsl_init,
   clutter_gst_dummy_deinit,
   clutter_gst_yv12_upload,
-};
-
-/*
- * NV12
- *
- * 8 bit Y plane followed by interleaved U/V plane containing 8 bit 2x2 subsampled UV
- */
-
-static gboolean
-clutter_gst_nv12_upload (ClutterGstVideoSink * sink, GstBuffer * buffer)
-{
-  ClutterGstVideoSinkPrivate *priv = sink->priv;
-  CoglMaterial *material;
-  CoglHandle y_tex, u_tex;
-  GstVideoFrame frame;
-
-  if (!gst_video_frame_map (&frame, &priv->info, buffer, GST_MAP_READ))
-    goto no_map;
-
-  y_tex =
-    cogl_texture_new_from_data (GST_VIDEO_FRAME_COMP_WIDTH (&frame, 0),
-    GST_VIDEO_FRAME_COMP_HEIGHT (&frame, 0),
-    CLUTTER_GST_TEXTURE_FLAGS,
-    COGL_PIXEL_FORMAT_A_8,
-    COGL_PIXEL_FORMAT_A_8,
-    GST_VIDEO_FRAME_PLANE_STRIDE (&frame, 0),
-    GST_VIDEO_FRAME_PLANE_DATA (&frame, 0));
-
-  u_tex =
-    cogl_texture_new_from_data (GST_VIDEO_FRAME_COMP_WIDTH (&frame, 1),
-    GST_VIDEO_FRAME_COMP_HEIGHT (&frame, 1),
-    CLUTTER_GST_TEXTURE_FLAGS,
-    COGL_PIXEL_FORMAT_RGB_565,
-    COGL_PIXEL_FORMAT_RGB_565,
-    GST_VIDEO_FRAME_PLANE_STRIDE (&frame, 1),
-    GST_VIDEO_FRAME_PLANE_DATA (&frame, 1));
-
-  gst_video_frame_unmap (&frame);
-
-  material = cogl_material_copy (priv->material_template);
-
-  cogl_material_set_layer (material, 0, y_tex);
-  cogl_material_set_layer (material, 1, u_tex);
-  cogl_material_set_layer_filters (material, 1,
-      COGL_MATERIAL_FILTER_NEAREST, COGL_MATERIAL_FILTER_NEAREST);
-
-  cogl_handle_unref (y_tex);
-  cogl_handle_unref (u_tex);
-
-  clutter_texture_set_cogl_material (priv->texture, material);
-  cogl_object_unref (material);
-
-  return TRUE;
-
-  /* ERRORS */
-no_map:
-  {
-    GST_ERROR_OBJECT (sink, "Could not map incoming video frame");
-    return FALSE;
-  }
-}
-
-static void
-clutter_gst_nv12_glsl_init (ClutterGstVideoSink * sink)
-{
-  _create_template_material (sink, nv12_to_rgba_shader, TRUE, 2);
-}
-
-
-static ClutterGstRenderer nv12_glsl_renderer = {
-  "NV12 glsl",
-  CLUTTER_GST_NV12,
-  CLUTTER_GST_GLSL | CLUTTER_GST_MULTI_TEXTURE,
-  GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("NV12")),
-  NULL,
-  clutter_gst_nv12_glsl_init,
-  clutter_gst_dummy_deinit,
-  clutter_gst_nv12_upload,
 };
 
 /*
@@ -1152,7 +942,6 @@ static ClutterGstRenderer yv12_fp_renderer = {
   CLUTTER_GST_YV12,
   CLUTTER_GST_FP | CLUTTER_GST_MULTI_TEXTURE,
   GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("YV12")),
-  NULL,
   clutter_gst_yv12_fp_init,
   clutter_gst_dummy_deinit,
   clutter_gst_yv12_upload,
@@ -1169,7 +958,7 @@ static ClutterGstRenderer yv12_fp_renderer = {
 static void
 clutter_gst_i420_glsl_init (ClutterGstVideoSink * sink)
 {
-  _create_template_material (sink, i420_to_rgba_shader, TRUE, 3);
+  _create_template_material (sink, yv12_to_rgba_shader, TRUE, 3);
 }
 
 static ClutterGstRenderer i420_glsl_renderer = {
@@ -1177,7 +966,6 @@ static ClutterGstRenderer i420_glsl_renderer = {
   CLUTTER_GST_I420,
   CLUTTER_GST_GLSL | CLUTTER_GST_MULTI_TEXTURE,
   GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("I420")),
-  NULL,
   clutter_gst_i420_glsl_init,
   clutter_gst_dummy_deinit,
   clutter_gst_yv12_upload,
@@ -1207,7 +995,6 @@ static ClutterGstRenderer i420_fp_renderer = {
   CLUTTER_GST_I420,
   CLUTTER_GST_FP | CLUTTER_GST_MULTI_TEXTURE,
   GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("I420")),
-  NULL,
   clutter_gst_i420_fp_init,
   clutter_gst_dummy_deinit,
   clutter_gst_yv12_upload,
@@ -1234,18 +1021,17 @@ clutter_gst_ayuv_upload (ClutterGstVideoSink * sink, GstBuffer * buffer)
   ClutterGstVideoSinkPrivate *priv = sink->priv;
   CoglHandle tex;
   GstVideoFrame frame;
+  GstMapInfo info;
 
   if (!gst_video_frame_map (&frame, &priv->info, buffer, GST_MAP_READ))
     goto map_fail;
 
   tex =
-      cogl_texture_new_from_data (GST_VIDEO_FRAME_COMP_WIDTH (&frame, 0),
-      GST_VIDEO_FRAME_COMP_HEIGHT (&frame, 0),
+      cogl_texture_new_from_data (priv->info.width,
+      priv->info.height,
       CLUTTER_GST_TEXTURE_FLAGS,
       COGL_PIXEL_FORMAT_RGBA_8888,
-      COGL_PIXEL_FORMAT_RGBA_8888,
-      GST_VIDEO_FRAME_PLANE_STRIDE (&frame, 0),
-      GST_VIDEO_FRAME_PLANE_DATA (&frame, 0));
+      COGL_PIXEL_FORMAT_RGBA_8888, priv->info.stride[0], frame.data[0]);
 
   gst_video_frame_unmap (&frame);
 
@@ -1266,7 +1052,6 @@ static ClutterGstRenderer ayuv_glsl_renderer = {
   CLUTTER_GST_AYUV,
   CLUTTER_GST_GLSL,
   GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("AYUV")),
-  NULL,
   clutter_gst_ayuv_glsl_init,
   clutter_gst_dummy_deinit,
   clutter_gst_ayuv_upload,
@@ -1277,121 +1062,29 @@ static ClutterGstRenderer ayuv_glsl_renderer = {
  */
 
 #ifdef HAVE_HW_DECODER_SUPPORT
-static gboolean
-clutter_gst_hw_set_texture (ClutterGstVideoSink * sink, CoglTexture * tex)
+static void
+clutter_gst_hw_init (ClutterGstVideoSink * sink)
 {
-  ClutterGstVideoSinkPrivate * const priv = sink->priv;
+  ClutterGstVideoSinkPrivate *priv = sink->priv;
+  CoglHandle tex;
   CoglHandle material;
 
+  /* Default texture is 1x1, let's replace it with one big enough. */
+  tex = cogl_texture_new_with_size (priv->info.width, priv->info.height,
+      CLUTTER_GST_TEXTURE_FLAGS, COGL_PIXEL_FORMAT_BGRA_8888);
+
   material = cogl_material_new ();
-  if (!material)
-    return FALSE;
   cogl_material_set_layer (material, 0, tex);
   clutter_texture_set_cogl_material (priv->texture, material);
 
   cogl_object_unref (tex);
   cogl_object_unref (material);
-  return TRUE;
-}
-
-static gboolean
-clutter_gst_hw_init_texture (ClutterGstVideoSink * sink,
-    GstSurfaceMeta * surface, GstBuffer * buffer)
-{
-  ClutterGstVideoSinkPrivate * const priv = sink->priv;
-  CoglHandle tex;
-  unsigned int gl_texture;
-  unsigned int gl_target;
-  GValue value = { 0 };
-
-  /* Default texture is 1x1, let's replace it with one big enough. */
-  tex = cogl_texture_new_with_size (priv->info.width, priv->info.height,
-      CLUTTER_GST_TEXTURE_FLAGS, COGL_PIXEL_FORMAT_BGRA_8888);
-  if (!tex)
-    return FALSE;
-
-  if (!clutter_gst_hw_set_texture (sink, tex)) {
-    cogl_object_unref (tex);
-    return FALSE;
-  }
-
-  cogl_texture_get_gl_texture (tex, &gl_texture, &gl_target);
-
-  g_value_init (&value, G_TYPE_UINT);
-  g_value_set_uint (&value, gl_texture);
-
-  priv->converter =
-    gst_surface_meta_create_converter (surface, "opengl", &value);
-  return priv->converter != NULL;
-}
-
-static gboolean
-clutter_gst_hw_init_pixmap (ClutterGstVideoSink * sink,
-    GstSurfaceMeta * surface, GstBuffer * buffer)
-{
-  ClutterGstVideoSinkPrivate * const priv = sink->priv;
-#ifdef CLUTTER_WINDOWING_X11
-  if (clutter_check_windowing_backend (CLUTTER_WINDOWING_X11))
-    {
-      Display * const dpy = clutter_x11_get_default_display ();
-      int screen = clutter_x11_get_default_screen ();
-      ClutterBackend *backend;
-      CoglContext *context;
-      CoglHandle tex;
-      GValue value = { 0 };
-
-      priv->pixmap = XCreatePixmap(dpy, clutter_x11_get_root_window (),
-                                   priv->info.width, priv->info.height, DefaultDepth (dpy, screen));
-      if (!priv->pixmap)
-        return FALSE;
-
-      backend = clutter_get_default_backend ();
-      context = clutter_backend_get_cogl_context (backend);
-      tex = cogl_texture_pixmap_x11_new (context, priv->pixmap, FALSE, NULL);
-      if (!tex)
-        goto error;
-      if (!cogl_texture_pixmap_x11_is_using_tfp_extension (tex))
-        goto error;
-      if (!clutter_gst_hw_set_texture (sink, tex))
-        goto error;
-
-      g_value_init (&value, G_TYPE_UINT);
-      g_value_set_uint (&value, priv->pixmap);
-
-      priv->converter =
-        gst_surface_meta_create_converter (surface, "x11-pixmap", &value);
-      if (!priv->converter)
-        goto error;
-      return TRUE;
-
-      /* ERRORS */
-    error:
-      if (tex)
-        cogl_object_unref (tex);
-      XFreePixmap (dpy, priv->pixmap);
-      priv->pixmap = None;
-      return FALSE;
-    }
-#endif
-  return FALSE;
-}
-
-static void
-clutter_gst_hw_init (ClutterGstVideoSink * sink)
-{
 }
 
 static void
 clutter_gst_hw_deinit (ClutterGstVideoSink * sink)
 {
   ClutterGstVideoSinkPrivate *priv = sink->priv;
-
-#ifdef CLUTTER_WINDOWING_X11
-  if (priv->pixmap != None) {
-    XFreePixmap (clutter_x11_get_default_display (), priv->pixmap);
-    priv->pixmap = None;
-  }
-#endif
 
   if (priv->converter != NULL)
     g_object_unref (priv->converter);
@@ -1407,12 +1100,19 @@ clutter_gst_hw_upload (ClutterGstVideoSink * sink, GstBuffer * buffer)
   g_return_val_if_fail (surface != NULL, FALSE);
 
   if (G_UNLIKELY (priv->converter == NULL)) {
-    do {
-      if (clutter_gst_hw_init_pixmap (sink, surface, buffer))
-        break;
-      if (clutter_gst_hw_init_texture (sink, surface, buffer))
-        break;
-    } while (0);
+    CoglHandle tex;
+    unsigned int gl_texture;
+    unsigned int gl_target;
+    GValue value = { 0 };
+
+    tex = clutter_texture_get_cogl_texture (priv->texture);
+    cogl_texture_get_gl_texture (tex, &gl_texture, &gl_target);
+
+    g_value_init (&value, G_TYPE_UINT);
+    g_value_set_uint (&value, gl_texture);
+
+    priv->converter =
+        gst_surface_meta_create_converter (surface, "opengl", &value);
     g_return_val_if_fail (priv->converter, FALSE);
   }
 
@@ -1428,151 +1128,9 @@ static ClutterGstRenderer hw_renderer = {
   CLUTTER_GST_SURFACE,
   0,
   GST_STATIC_CAPS ("video/x-surface, opengl=true"),
-  NULL,
   clutter_gst_hw_init,
   clutter_gst_hw_deinit,
   clutter_gst_hw_upload,
-};
-#endif
-
-#ifdef CLUTTER_COGL_HAS_GL
-
-typedef struct {
-  gboolean is_initialized;
-} GLTextureUploadRendererContext;
-
-static void
-clutter_gst_gl_texture_upload_init (ClutterGstVideoSink * sink)
-{
-  ClutterGstRenderer *renderer = sink->priv->renderer;
-
-  if (renderer->context)
-    return;
-
-  renderer->context = g_new0 (GLTextureUploadRendererContext, 1);
-  if (!renderer->context) {
-    GST_ERROR ("Failed to allocate renderer context");
-  }
-}
-
-static void
-clutter_gst_gl_texture_upload_deinit (ClutterGstVideoSink * sink)
-{
-  ClutterGstRenderer *renderer = sink->priv->renderer;
-
-  if (!renderer->context)
-    return;
-
-  g_free (renderer->context);
-  renderer->context = NULL;
-}
-
-static gboolean
-clutter_gst_gl_texture_upload_init_texture (ClutterGstVideoSink * sink)
-{
-  CoglHandle material;
-  CoglTexture *tex = NULL, *crop_tex = NULL;
-  ClutterGstVideoSinkPrivate *priv = sink->priv;
-  GstVideoCropMeta *crop_meta = &priv->crop_meta;
-  ClutterGstRenderer *renderer = sink->priv->renderer;
-  GLTextureUploadRendererContext *context = renderer->context;
-
-  tex = cogl_texture_new_with_size (priv->info.width,
-      priv->info.height, CLUTTER_GST_TEXTURE_FLAGS, COGL_PIXEL_FORMAT_RGBA_8888);
-
-  if (!tex) {
-    GST_WARNING ("Couldn't create cogl texture");
-    return FALSE;
-  }
-
-  if (priv->has_crop_meta) {
-    crop_tex = cogl_texture_new_from_sub_texture (tex, crop_meta->x,
-        crop_meta->y, crop_meta->width, crop_meta->height);
-  }
-
-  material = cogl_material_new ();
-  if (!material) {
-    GST_WARNING ("Couldn't create cogl material");
-    return FALSE;
-  }
-
-  if (priv->has_crop_meta)
-    cogl_material_set_layer (material, 0, crop_tex);
-  else
-    cogl_material_set_layer (material, 0, tex);
-
-  clutter_texture_set_cogl_material (priv->texture, material);
-
-  cogl_object_unref (tex);
-  if (crop_tex)
-    cogl_object_unref (crop_tex);
-  cogl_object_unref (material);
-
-  context->is_initialized = TRUE;
-  return TRUE;
-}
-
-static gboolean
-clutter_gst_gl_texture_upload_upload (ClutterGstVideoSink * sink, GstBuffer * buffer)
-{
-  ClutterGstVideoSinkPrivate *priv = sink->priv;
-  ClutterGstRenderer *renderer = sink->priv->renderer;
-  GLTextureUploadRendererContext *context = renderer->context;
-  GstVideoGLTextureUploadMeta *upload_meta = NULL;
-  CoglTexture *tex;
-  guint gl_handle[4], gl_target[4];
-
-  if (!context) {
-    GST_WARNING ("Couldn't get the renderer context");
-    return FALSE;
-  }
-
-  if (!context->is_initialized || priv->crop_meta_has_changed) {
-    gboolean ret = clutter_gst_gl_texture_upload_init_texture (sink);
-    if (!ret)
-      return ret;
-  }
-
-  upload_meta = gst_buffer_get_video_gl_texture_upload_meta (buffer);
-  if (!upload_meta) {
-    GST_WARNING ("Buffer does not support GLTextureUploadMeta API");
-    return FALSE;
-  }
-
-  if (upload_meta->n_textures != 1 ||
-      upload_meta->texture_type[0] != GST_VIDEO_GL_TEXTURE_TYPE_RGBA) {
-    GST_WARNING ("clutter-video-sink only supports gl upload in a single RGBA texture");
-    return FALSE;
-  }
-
-  if (!(tex = clutter_texture_get_cogl_texture (priv->texture))) {
-    GST_WARNING ("Couldn't get Cogl texture");
-    return FALSE;
-  }
-
-  if (!cogl_texture_get_gl_texture (tex, gl_handle, gl_target)) {
-    GST_WARNING ("Couldn't get GL texture");
-    return FALSE;
-  }
-
-  if (!gst_video_gl_texture_upload_meta_upload (upload_meta, gl_handle)) {
-    GST_WARNING ("GL texture upload failed");
-    return FALSE;
-  }
-
-  clutter_actor_queue_redraw (CLUTTER_ACTOR (priv->texture));
-  return TRUE;
-}
-
-static ClutterGstRenderer gl_texture_upload_renderer = {
-    "GL Texture upload renderer",
-    CLUTTER_GST_GL_TEXTURE_UPLOAD,
-    0,
-    GST_STATIC_CAPS (GL_SINK_CAPS),
-    NULL,
-    clutter_gst_gl_texture_upload_init,
-    clutter_gst_gl_texture_upload_deinit,
-    clutter_gst_gl_texture_upload_upload,
 };
 #endif
 
@@ -1590,7 +1148,6 @@ clutter_gst_build_renderers_list (void)
     &rgb24_renderer,
     &rgb32_renderer,
     &yv12_glsl_renderer,
-    &nv12_glsl_renderer,
     &i420_glsl_renderer,
 #ifdef CLUTTER_COGL_HAS_GL
     &yv12_fp_renderer,
@@ -1599,9 +1156,6 @@ clutter_gst_build_renderers_list (void)
     &ayuv_glsl_renderer,
 #ifdef HAVE_HW_DECODER_SUPPORT
     &hw_renderer,
-#endif
-#ifdef CLUTTER_COGL_HAS_GL
-    &gl_texture_upload_renderer,
 #endif
     NULL
   };
@@ -1663,7 +1217,7 @@ navigation_event (ClutterActor * actor,
   if (event->type == CLUTTER_MOTION) {
     ClutterMotionEvent *mevent = (ClutterMotionEvent *) event;
 
-    GST_DEBUG ("Received mouse move event to %.2f,%.2f", mevent->x, mevent->y);
+    GST_DEBUG ("Received mouse move event to %d,%d", mevent->x, mevent->y);
     gst_navigation_send_mouse_event (GST_NAVIGATION (sink),
         "mouse-move", 0, mevent->x, mevent->y);
   } else if (event->type == CLUTTER_BUTTON_PRESS ||
@@ -1671,7 +1225,7 @@ navigation_event (ClutterActor * actor,
     ClutterButtonEvent *bevent = (ClutterButtonEvent *) event;
     const char *type;
 
-    GST_DEBUG ("Received button %s event at %.2f,%.2f",
+    GST_DEBUG ("Received button %s event at %d,%d",
         (event->type == CLUTTER_BUTTON_PRESS) ? "press" : "release",
         bevent->x, bevent->y);
     type =
@@ -1819,11 +1373,6 @@ clutter_gst_video_sink_dispose (GObject * object)
   self = CLUTTER_GST_VIDEO_SINK (object);
   priv = self->priv;
 
-  if (priv->material_template != COGL_INVALID_HANDLE) {
-    cogl_object_unref (priv->material_template);
-    priv->material_template = COGL_INVALID_HANDLE;
-  }
-
   if (priv->renderer) {
     priv->renderer->deinit (self);
     priv->renderer = NULL;
@@ -1876,9 +1425,6 @@ clutter_gst_video_sink_set_texture (ClutterGstVideoSink * sink,
       g_signal_handler_disconnect (priv->texture, id);
     }
     g_array_set_size (priv->signal_handler_ids, 0);
-
-    g_object_remove_weak_pointer (G_OBJECT (priv->texture),
-                                  (gpointer *) & (priv->texture));
   }
 
   priv->texture = texture;
@@ -1970,48 +1516,6 @@ clutter_gst_video_sink_stop (GstBaseSink * base_sink)
   return TRUE;
 }
 
-static gboolean
-clutter_gst_video_sink_propose_allocation (GstBaseSink * base_sink, GstQuery * query)
-{
-  gboolean need_pool = FALSE;
-  GstCaps * caps = NULL;
-
-  gst_query_parse_allocation (query, &caps, &need_pool);
-
-  gst_query_add_allocation_meta (query,
-      GST_VIDEO_META_API_TYPE, NULL);
-
-  gst_query_add_allocation_meta (query,
-      GST_VIDEO_GL_TEXTURE_UPLOAD_META_API_TYPE, NULL);
-
-  return TRUE;
-}
-
-static gboolean
-clutter_gst_video_sink_event (GstBaseSink * basesink, GstEvent * event)
-{
-  ClutterGstVideoSink *sink = CLUTTER_GST_VIDEO_SINK (basesink);
-  ClutterGstVideoSinkPrivate *priv = sink->priv;
-  ClutterGstSource *gst_source = priv->source;
-
-  switch (GST_EVENT_TYPE (event)) {
-    case GST_EVENT_FLUSH_START:
-      g_mutex_lock (&gst_source->buffer_lock);
-      if (gst_source->buffer) {
-        GST_DEBUG ("Freeing existing buffer %p", gst_source->buffer);
-        gst_buffer_unref (gst_source->buffer);
-        gst_source->buffer = NULL;
-      }
-      g_mutex_unlock (&gst_source->buffer_lock);
-      break;
-
-    default:
-      break;
-  }
-
-  return GST_BASE_SINK_CLASS (parent_class)->event (basesink, event);
-}
-
 static void
 clutter_gst_video_sink_class_init (ClutterGstVideoSinkClass * klass)
 {
@@ -2047,8 +1551,6 @@ clutter_gst_video_sink_class_init (ClutterGstVideoSinkClass * klass)
   gstbase_sink_class->stop = clutter_gst_video_sink_stop;
   gstbase_sink_class->set_caps = clutter_gst_video_sink_set_caps;
   gstbase_sink_class->get_caps = clutter_gst_video_sink_get_caps;
-  gstbase_sink_class->propose_allocation = clutter_gst_video_sink_propose_allocation;
-  gstbase_sink_class->event = clutter_gst_video_sink_event;
 
   /**
    * ClutterGstVideoSink:texture:

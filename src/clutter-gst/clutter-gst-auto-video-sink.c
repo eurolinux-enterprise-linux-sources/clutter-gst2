@@ -457,7 +457,7 @@ clutter_gst_auto_video_sink_accept_caps (ClutterGstAutoVideoSink * bin,
     if (!gst_caps_is_empty (result))
       ret = TRUE;
 
-    gst_caps_unref (result);
+    caps = result;
   }
 
   gst_caps_unref (allowed_caps);

@@ -1,5 +1,5 @@
 Name:           clutter-gst2
-Version:        2.0.18
+Version:        2.0.4
 Release:        1%{?dist}
 Summary:        GStreamer integration for Clutter
 
@@ -51,8 +51,7 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/gtk-doc/
 %postun -p /sbin/ldconfig
 
 %files
-%license COPYING
-%doc AUTHORS README
+%doc AUTHORS COPYING README
 %{_libdir}/girepository-1.0/ClutterGst-2.0.typelib
 %{_libdir}/gstreamer-1.0/libgstclutter.so
 %{_libdir}/libclutter-gst-2.0.so.*
@@ -65,26 +64,6 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/gtk-doc/
 #doc #{_datadir}/gtk-doc/
 
 %changelog
-* Thu Feb 09 2017 Wim Taymans <wtaymans@redhat.com> - 2.0.18-1
-- Update to 2.0.18
-- Remove obsolete patches
-- Use license macro for COPYING
-- Resolves: #1386833
-
-* Tue May 19 2015 Wim Taymans <wtaymans@redhat.com> - 2.0.12-2
-- Add patch to flush video sink, fixes errors in cheese
-- Resolves: #1174515
-
-* Thu Mar 19 2015 Richard Hughes <rhughes@redhat.com> - 2.0.12-1
-- Update to 2.0.12
-- Resolves: #1174515
-
-* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 2.0.4-3
-- Mass rebuild 2014-01-24
-
-* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 2.0.4-2
-- Mass rebuild 2013-12-27
-
 * Sat May 25 2013 Kalev Lember <kalevlember@gmail.com> - 2.0.4-1
 - Update to 2.0.4
 

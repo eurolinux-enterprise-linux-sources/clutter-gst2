@@ -78,6 +78,10 @@ G_DEFINE_INTERFACE_WITH_CODE (ClutterGstPlayer, clutter_gst_player, G_TYPE_OBJEC
                        clutter_gst_player_private_quark,        \
                        private))
 
+#define PLAYER_GET_CLASS_PRIVATE(player)                     \
+  (g_type_get_qdata (G_OBJECT_TYPE (player),                 \
+                     clutter_gst_player_class_quark))
+
 /* idle timeouts (in ms) */
 #define TICK_TIMEOUT        500
 #define BUFFERING_TIMEOUT   250
@@ -196,18 +200,6 @@ static guint signals[LAST_SIGNAL] = { 0, };
 static gboolean player_buffering_timeout (gpointer data);
 
 /* Logic */
-static ClutterGstPlayerIfacePrivate *
-clutter_gst_player_get_class_iface_priv (GObject *object)
-{
-  GType k = G_OBJECT_TYPE (object);
-  ClutterGstPlayerIfacePrivate *ret = NULL;
-  while (k != 0 && ret == NULL)
-    {
-      ret = g_type_get_qdata (k, clutter_gst_player_class_quark);
-      k = g_type_parent (k);
-    }
-  return ret;
-}
 
 #ifdef CLUTTER_GST_ENABLE_DEBUG
 static gchar *
@@ -1205,16 +1197,14 @@ on_volume_changed_main_context (gpointer data)
 {
   ClutterGstPlayer *player = CLUTTER_GST_PLAYER (data);
   ClutterGstPlayerPrivate *priv = PLAYER_GET_PRIVATE (player);
+  gdouble volume;
 
-  if (priv)
-    {
-      gdouble volume =
-        gst_stream_volume_get_volume (GST_STREAM_VOLUME (priv->pipeline),
-                                      GST_STREAM_VOLUME_FORMAT_CUBIC);
-      priv->volume = volume;
+  volume =
+    gst_stream_volume_get_volume (GST_STREAM_VOLUME (priv->pipeline),
+                                  GST_STREAM_VOLUME_FORMAT_CUBIC);
+  priv->volume = volume;
 
-      g_object_notify (G_OBJECT (player), "audio-volume");
-    }
+  g_object_notify (G_OBJECT (player), "audio-volume");
 
   g_object_unref (player);
 
@@ -1263,15 +1253,12 @@ on_audio_changed_main_context (gpointer data)
   ClutterGstPlayer *player = CLUTTER_GST_PLAYER (data);
   ClutterGstPlayerPrivate *priv = PLAYER_GET_PRIVATE (player);
 
-  if (priv)
-    {
-      free_tags_list (&priv->audio_streams);
-      priv->audio_streams = get_tags (priv->pipeline, "n-audio", "get-audio-tags");
+  free_tags_list (&priv->audio_streams);
+  priv->audio_streams = get_tags (priv->pipeline, "n-audio", "get-audio-tags");
 
-      CLUTTER_GST_NOTE (AUDIO_STREAM, "audio-streams changed");
+  CLUTTER_GST_NOTE (AUDIO_STREAM, "audio-streams changed");
 
-      g_object_notify (G_OBJECT (player), "audio-streams");
-    }
+  g_object_notify (G_OBJECT (player), "audio-streams");
 
   g_object_unref (player);
 
@@ -1328,15 +1315,12 @@ on_text_changed_main_context (gpointer data)
   ClutterGstPlayer *player = CLUTTER_GST_PLAYER (data);
   ClutterGstPlayerPrivate *priv = PLAYER_GET_PRIVATE (player);
 
-  if (priv)
-    {
-      free_tags_list (&priv->subtitle_tracks);
-      priv->subtitle_tracks = get_tags (priv->pipeline, "n-text", "get-text-tags");
+  free_tags_list (&priv->subtitle_tracks);
+  priv->subtitle_tracks = get_tags (priv->pipeline, "n-text", "get-text-tags");
 
-      CLUTTER_GST_NOTE (AUDIO_STREAM, "subtitle-tracks changed");
+  CLUTTER_GST_NOTE (AUDIO_STREAM, "subtitle-tracks changed");
 
-      g_object_notify (G_OBJECT (player), "subtitle-tracks");
-    }
+  g_object_notify (G_OBJECT (player), "subtitle-tracks");
 
   g_object_unref (player);
 
@@ -1438,8 +1422,7 @@ clutter_gst_player_set_property (GObject      *object,
       break;
 
     default:
-      iface_priv = clutter_gst_player_get_class_iface_priv (object);
-      g_assert (iface_priv != NULL);
+      iface_priv = PLAYER_GET_CLASS_PRIVATE (object);
       iface_priv->set_property (object, property_id, value, pspec);
     }
 }
@@ -1548,7 +1531,7 @@ clutter_gst_player_get_property (GObject    *object,
       break;
 
     default:
-      iface_priv = clutter_gst_player_get_class_iface_priv (object);
+      iface_priv = PLAYER_GET_CLASS_PRIVATE (object);
       iface_priv->get_property (object, property_id, value, pspec);
     }
 }
@@ -2083,9 +2066,8 @@ clutter_gst_player_init (ClutterGstPlayer *player)
                     player);
 
 #if defined(CLUTTER_WINDOWING_X11) && defined (HAVE_HW_DECODER_SUPPORT)
-  if (clutter_check_windowing_backend (CLUTTER_WINDOWING_X11))
-    gst_bus_set_sync_handler (priv->bus, on_sync_message,
-                              clutter_x11_get_default_display (), NULL);
+  gst_bus_set_sync_handler (priv->bus, on_sync_message,
+      clutter_x11_get_default_display (), NULL);
 #endif
 
   gst_object_unref (GST_OBJECT (priv->bus));
