@@ -2,27 +2,20 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>ClutterGstPlayer</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
-<link rel="home" href="index.html" title="Clutter Gst 2.0.4 Reference Manual">
+<title>Clutter Gst 2.0.12
+ Reference Manual: ClutterGstPlayer</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="Clutter Gst 2.0.12 Reference Manual">
 <link rel="up" href="ch02.html" title="Clutter Actors And Objects">
 <link rel="prev" href="ch02.html" title="Clutter Actors And Objects">
 <link rel="next" href="ClutterGstVideoTexture.html" title="ClutterGstVideoTexture">
-<meta name="generator" content="GTK-Doc V1.18.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.19.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
-<tr valign="middle">
-<td><a accesskey="p" href="ch02.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
-<td><a accesskey="u" href="ch02.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
-<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">Clutter Gst 2.0.4
- Reference Manual</th>
-<td><a accesskey="n" href="ClutterGstVideoTexture.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
-</tr>
-<tr><td colspan="5" class="shortcuts">
-<a href="#ClutterGstPlayer.synopsis" class="shortcut">Top</a>
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="10"><tr valign="middle">
+<td width="100%" align="left">
+<a href="#" class="shortcut">Top</a>
                    | 
                   <a href="#ClutterGstPlayer.description" class="shortcut">Description</a>
                    | 
@@ -35,8 +28,12 @@
                   <a href="#ClutterGstPlayer.properties" class="shortcut">Properties</a>
                    | 
                   <a href="#ClutterGstPlayer.signals" class="shortcut">Signals</a>
-</td></tr>
-</table>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch02.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="ch02.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="ClutterGstVideoTexture.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
 <div class="refentry">
 <a name="ClutterGstPlayer"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
@@ -216,8 +213,11 @@ directly accessed
 <p>
 Interface vtable for <a class="link" href="ClutterGstPlayer.html" title="ClutterGstPlayer"><span class="type">ClutterGstPlayer</span></a> implementations
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="ClutterGstPlayerIface.get-pipeline"></a>get_pipeline</code></em> ()</span></p></td>
@@ -414,8 +414,11 @@ set/get_property of <span class="type">GObjectClass</span>. You should call this
 function at the end of the class_init method of the class
 implementing <a class="link" href="ClutterGstPlayer.html" title="ClutterGstPlayer"><span class="type">ClutterGstPlayer</span></a>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>object_class</code></em> :</span></p></td>
 <td>a <span class="type">GObjectClass</span>
@@ -438,8 +441,11 @@ When you're finished with the ClutterGstPlayer mixin features (usually in
 the dispose or finalize vfuncs), call <a class="link" href="ClutterGstPlayer.html#clutter-gst-player-deinit" title="clutter_gst_player_deinit ()"><code class="function">clutter_gst_player_deinit()</code></a> to
 desallocate the resources created by <a class="link" href="ClutterGstPlayer.html#clutter-gst-player-init" title="clutter_gst_player_init ()"><code class="function">clutter_gst_player_init()</code></a>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -463,8 +469,11 @@ Frees the resources created by <a class="link" href="ClutterGstPlayer.html#clutt
 <a class="link" href="ClutterGstPlayer.html#clutter-gst-player-deinit" title="clutter_gst_player_deinit ()"><code class="function">clutter_gst_player_deinit()</code></a> has been called, no other player method can be
 called on the instance.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
 <td>a <a class="link" href="ClutterGstPlayer.html" title="ClutterGstPlayer"><span class="type">ClutterGstPlayer</span></a>
@@ -481,8 +490,11 @@ called on the instance.
 Retrieves the <span class="type">GstPipeline</span> used by the <em class="parameter"><code>player</code></em>, for direct use with
 GStreamer API.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -505,8 +517,11 @@ GStreamer API.
 <p>
 Get the idle state of the pipeline.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -528,8 +543,11 @@ Get the idle state of the pipeline.
 <p>
 Retrieves the user agent used when streaming.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -559,8 +577,11 @@ When streaming content, you might want to set a custom user agent, eg. to
 promote your software, make it appear in statistics or because the server
 requires a special user agent you want to impersonate.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -584,8 +605,11 @@ requires a special user agent you want to impersonate.
 Seeking can be done with several trade-offs. Clutter-gst defaults
 to <code class="literal">CLUTTER_GST_SEEK_FLAG_NONE</code>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -608,8 +632,11 @@ to <code class="literal">CLUTTER_GST_SEEK_FLAG_NONE</code>.
 <p>
 Get the current value of the seek-flags property.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -630,8 +657,11 @@ Get the current value of the seek-flags property.
 <a name="clutter-gst-player-get-buffering-mode"></a><h3>clutter_gst_player_get_buffering_mode ()</h3>
 <pre class="programlisting"><span class="returnvalue">ClutterGstBufferingMode</span> clutter_gst_player_get_buffering_mode
                                                         (<em class="parameter"><code><a class="link" href="ClutterGstPlayer.html" title="ClutterGstPlayer"><span class="type">ClutterGstPlayer</span></a> *player</code></em>);</pre>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -653,8 +683,11 @@ Get the current value of the seek-flags property.
 <pre class="programlisting"><span class="returnvalue">void</span>                clutter_gst_player_set_buffering_mode
                                                         (<em class="parameter"><code><a class="link" href="ClutterGstPlayer.html" title="ClutterGstPlayer"><span class="type">ClutterGstPlayer</span></a> *player</code></em>,
                                                          <em class="parameter"><code><span class="type">ClutterGstBufferingMode</span> mode</code></em>);</pre>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -678,8 +711,11 @@ Get the current value of the seek-flags property.
 <p>
 Get the list of audio streams of the current media.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -705,8 +741,11 @@ Get the current audio stream. The number returned in the index of the
 audio stream playing in the list returned by
 <a class="link" href="ClutterGstPlayer.html#clutter-gst-player-get-audio-streams" title="clutter_gst_player_get_audio_streams ()"><code class="function">clutter_gst_player_get_audio_streams()</code></a>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -731,8 +770,11 @@ audio stream</td>
 Set the audio stream to play. <em class="parameter"><code>index_</code></em> is the index of the stream
 in the list returned by <a class="link" href="ClutterGstPlayer.html#clutter-gst-player-get-audio-streams" title="clutter_gst_player_get_audio_streams ()"><code class="function">clutter_gst_player_get_audio_streams()</code></a>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -755,8 +797,11 @@ in the list returned by <a class="link" href="ClutterGstPlayer.html#clutter-gst-
 <p>
 Get the list of subtitles tracks of the current media.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -783,8 +828,11 @@ Get the current subtitles track. The number returned is the index of the
 subtiles track in the list returned by
 <a class="link" href="ClutterGstPlayer.html#clutter-gst-player-get-subtitle-tracks" title="clutter_gst_player_get_subtitle_tracks ()"><code class="function">clutter_gst_player_get_subtitle_tracks()</code></a>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -813,8 +861,11 @@ in the list returned by <a class="link" href="ClutterGstPlayer.html#clutter-gst-
 <p>
 If <em class="parameter"><code>index_</code></em> is -1, the subtitles are turned off.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -838,7 +889,7 @@ If <em class="parameter"><code>index_</code></em> is -1, the subtitles are turne
 <p>
 Index of the current audio stream.
 </p>
-<p>Allowed values: &gt;= G_MAXULONG</p>
+<p>Allowed values: &gt;= -1</p>
 <p>Default value: -1</p>
 <p class="since">Since 1.4</p>
 </div>
@@ -885,7 +936,7 @@ Flags to use when seeking.
 <a name="ClutterGstPlayer--subtitle-track"></a><h3>The <code class="literal">"subtitle-track"</code> property</h3>
 <pre class="programlisting">  "subtitle-track"           <span class="type">gint</span>                  : Read / Write</pre>
 <p>Index of the current subtitles track.</p>
-<p>Allowed values: &gt;= G_MAXULONG</p>
+<p>Allowed values: &gt;= -1</p>
 <p>Default value: -1</p>
 </div>
 <hr>
@@ -917,8 +968,11 @@ The User Agent used by <a class="link" href="ClutterGstPlayer.html" title="Clutt
 The ::download-buffering signal is emitted each time their an
 update about the buffering of the current media.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>player</code></em> :</span></p></td>
@@ -944,6 +998,6 @@ update about the buffering of the current media.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.18.1</div>
+          Generated by GTK-Doc V1.19.1</div>
 </body>
 </html>

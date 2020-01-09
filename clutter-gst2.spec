@@ -1,11 +1,12 @@
 Name:           clutter-gst2
-Version:        2.0.4
-Release:        3%{?dist}
+Version:        2.0.12
+Release:        2%{?dist}
 Summary:        GStreamer integration for Clutter
 
 License:        LGPLv2+
 URL:            http://www.clutter-project.org
 Source0:        http://ftp.gnome.org/pub/GNOME/sources/clutter-gst/2.0/clutter-gst-%{version}.tar.xz
+Patch1:         0001-video-sink-clear-buffer-in-flush.patch
 
 BuildRequires:  clutter-devel
 BuildRequires:  gobject-introspection-devel
@@ -33,6 +34,7 @@ developing applications that use clutter-gst API version 2.0.
 
 %prep
 %setup -q -n clutter-gst-%{version}
+%patch1 -p1
 
 %build
 %configure
@@ -64,6 +66,14 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/gtk-doc/
 #doc #{_datadir}/gtk-doc/
 
 %changelog
+* Tue May 19 2015 Wim Taymans <wtaymans@redhat.com> - 2.0.12-2
+- Add patch to flush video sink, fixes errors in cheese
+- Resolves: #1174515
+
+* Thu Mar 19 2015 Richard Hughes <rhughes@redhat.com> - 2.0.12-1
+- Update to 2.0.12
+- Resolves: #1174515
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 2.0.4-3
 - Mass rebuild 2014-01-24
 

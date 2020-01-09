@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
-<book xmlns="http://www.devhelp.net/book" title="Clutter Gst 2.0.4&#10; Reference Manual" link="index.html" author="" name="clutter-gst" version="2" language="c">
+<book xmlns="http://www.devhelp.net/book" title="Clutter Gst 2.0.12&#10; Reference Manual" link="index.html" author="" name="clutter-gst" version="2" language="c">
   <chapters>
     <sub name="Clutter Gst Overview" link="ch01.html"/>
     <sub name="Clutter Actors And Objects" link="ch02.html">

@@ -2,27 +2,20 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>ClutterGstVideoTexture</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
-<link rel="home" href="index.html" title="Clutter Gst 2.0.4 Reference Manual">
+<title>Clutter Gst 2.0.12
+ Reference Manual: ClutterGstVideoTexture</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="Clutter Gst 2.0.12 Reference Manual">
 <link rel="up" href="ch02.html" title="Clutter Actors And Objects">
 <link rel="prev" href="ClutterGstPlayer.html" title="ClutterGstPlayer">
 <link rel="next" href="ClutterGstVideoSink.html" title="ClutterGstVideoSink">
-<meta name="generator" content="GTK-Doc V1.18.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.19.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
-<tr valign="middle">
-<td><a accesskey="p" href="ClutterGstPlayer.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
-<td><a accesskey="u" href="ch02.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
-<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">Clutter Gst 2.0.4
- Reference Manual</th>
-<td><a accesskey="n" href="ClutterGstVideoSink.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
-</tr>
-<tr><td colspan="5" class="shortcuts">
-<a href="#ClutterGstVideoTexture.synopsis" class="shortcut">Top</a>
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="10"><tr valign="middle">
+<td width="100%" align="left">
+<a href="#" class="shortcut">Top</a>
                    | 
                   <a href="#ClutterGstVideoTexture.description" class="shortcut">Description</a>
                    | 
@@ -31,8 +24,12 @@
                   <a href="#ClutterGstVideoTexture.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
                    | 
                   <a href="#ClutterGstVideoTexture.properties" class="shortcut">Properties</a>
-</td></tr>
-</table>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch02.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="ClutterGstPlayer.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="ClutterGstVideoSink.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
 <div class="refentry">
 <a name="ClutterGstVideoTexture"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
@@ -146,15 +143,18 @@ Creates a video texture.
 </p>
 <p>
 </p>
-<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="note">
 <h3 class="title">Note</h3>This function has to be called from Clutter's main thread. While
 GStreamer will spawn threads to do its work, we want all the GL calls to
 happen in the same thread. Clutter-gst knows which thread it is by
 assuming this constructor is called from the Clutter thread.</div>
 <p>
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
 <td>the newly created video texture actor</td>
@@ -170,8 +170,11 @@ assuming this constructor is called from the Clutter thread.</div>
 Retrieves the <span class="type">GstPipeline</span> used by the <em class="parameter"><code>texture</code></em>, for direct use with
 GStreamer API.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -194,8 +197,11 @@ GStreamer API.
 <p>
 Retrieves the material used to draw when no media is being played.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -226,8 +232,11 @@ The default idle material will paint the <a class="link" href="ClutterGstVideoTe
 If <code class="literal">COGL_INVALID_HANDLE</code> is given as <em class="parameter"><code>material</code></em> to this function, this
 default idle material will be used.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -250,8 +259,11 @@ default idle material will be used.
 <p>
 Retrieves the user agent used when streaming.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -282,8 +294,11 @@ When streaming content, you might want to set a custom user agent, eg. to
 promote your software, make it appear in statistics or because the server
 requires a special user agent you want to impersonate.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -308,8 +323,11 @@ requires a special user agent you want to impersonate.
 Seeking can be done with several trade-offs. Clutter-gst defaults
 to <code class="literal">CLUTTER_GST_SEEK_FLAG_NONE</code>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -333,8 +351,11 @@ to <code class="literal">CLUTTER_GST_SEEK_FLAG_NONE</code>.
 <p>
 Get the current value of the seek-flags property.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -355,8 +376,11 @@ Get the current value of the seek-flags property.
 <a name="clutter-gst-video-texture-get-buffering-mode"></a><h3>clutter_gst_video_texture_get_buffering_mode ()</h3>
 <pre class="programlisting"><span class="returnvalue">ClutterGstBufferingMode</span> clutter_gst_video_texture_get_buffering_mode
                                                         (<em class="parameter"><code><a class="link" href="ClutterGstVideoTexture.html" title="ClutterGstVideoTexture"><span class="type">ClutterGstVideoTexture</span></a> *texture</code></em>);</pre>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -378,8 +402,11 @@ Get the current value of the seek-flags property.
 <pre class="programlisting"><span class="returnvalue">void</span>                clutter_gst_video_texture_set_buffering_mode
                                                         (<em class="parameter"><code><a class="link" href="ClutterGstVideoTexture.html" title="ClutterGstVideoTexture"><span class="type">ClutterGstVideoTexture</span></a> *texture</code></em>,
                                                          <em class="parameter"><code><span class="type">ClutterGstBufferingMode</span> mode</code></em>);</pre>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -403,8 +430,11 @@ Get the current value of the seek-flags property.
 <p>
 Get the list of audio streams of the current media.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -431,8 +461,11 @@ Get the current audio stream. The number returned in the index of the
 audio stream playing in the list returned by
 <a class="link" href="ClutterGstVideoTexture.html#clutter-gst-video-texture-get-audio-streams" title="clutter_gst_video_texture_get_audio_streams ()"><code class="function">clutter_gst_video_texture_get_audio_streams()</code></a>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -458,8 +491,11 @@ audio stream</td>
 Set the audio stream to play. <em class="parameter"><code>index_</code></em> is the index of the stream
 in the list returned by <a class="link" href="ClutterGstVideoTexture.html#clutter-gst-video-texture-get-audio-streams" title="clutter_gst_video_texture_get_audio_streams ()"><code class="function">clutter_gst_video_texture_get_audio_streams()</code></a>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -482,8 +518,11 @@ in the list returned by <a class="link" href="ClutterGstVideoTexture.html#clutte
 <p>
 Get the list of subtitles tracks of the current media.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -510,8 +549,11 @@ Get the current subtitles track. The number returned is the index of the
 subitles track in the list returned by
 <a class="link" href="ClutterGstVideoTexture.html#clutter-gst-video-texture-get-subtitle-tracks" title="clutter_gst_video_texture_get_subtitle_tracks ()"><code class="function">clutter_gst_video_texture_get_subtitle_tracks()</code></a>.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -540,8 +582,11 @@ in the list returned by <a class="link" href="ClutterGstVideoTexture.html#clutte
 <p>
 If <em class="parameter"><code>index_</code></em> is -1, the subtitles are turned off.
 </p>
-<div class="variablelist"><table border="0">
+<div class="variablelist"><table border="0" class="variablelist">
+<colgroup>
 <col align="left" valign="top">
+<col>
+</colgroup>
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
@@ -574,6 +619,6 @@ If <em class="parameter"><code>index_</code></em> is -1, the subtitles are turne
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.18.1</div>
+          Generated by GTK-Doc V1.19.1</div>
 </body>
 </html>

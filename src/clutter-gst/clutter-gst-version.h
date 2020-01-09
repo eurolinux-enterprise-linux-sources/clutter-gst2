@@ -56,21 +56,21 @@
  *
  * ClutterGst micro version (e.g. "3", if %CLUTTER_GST_VERSION is "1.2.3")
  */
-#define CLUTTER_GST_MICRO_VERSION   (4)
+#define CLUTTER_GST_MICRO_VERSION   (12)
 
 /**
  * CLUTTER_GST_VERSION:
  *
  * ClutterGst full version (e.g. "1.2.3")
  */
-#define CLUTTER_GST_VERSION         (2.0.4)
+#define CLUTTER_GST_VERSION         (2.0.12)
 
 /**
  * CLUTTER_GST_VERSION_S:
  *
  * ClutterGst full version, encoded as a string.
  */
-#define CLUTTER_GST_VERSION_S       "2.0.4"
+#define CLUTTER_GST_VERSION_S       "2.0.12"
 
 /**
  * CLUTTER_GST_VERSION_HEX:
