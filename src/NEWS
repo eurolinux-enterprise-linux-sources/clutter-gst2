@@ -1,9 +1,45 @@
+clutter-gst 2.0.18 (20/03/2016)
+===============================================================================
+
+List of changes since 2.0.16
+
+ o fix YUV shaders with GL3
+
+
+Many Thanks to:
+
+    Fabrice Bellet
+
+clutter-gst 2.0.16 (25/05/2015)
+===============================================================================
+
+List of changes since 2.0.14
+
+ o clear buffer in flush
+
+
+Many Thanks to:
+
+    Wim Taymans
+
+clutter-gst 2.0.14 (25/01/2015)
+===============================================================================
+
+List of changes since 2.0.12
+
+ o Fix introspection issues
+
+
+Many Thanks to:
+
+    Emmanuele Bassi
+
 clutter-gst 2.0.12 (1/06/2014)
 ===============================================================================
 
 List of changes since 2.0.10
 
- o Depend on GStreamer 2.0
+ o Depend on GStreamer 1.2.0
 
  o Fix build issues
 

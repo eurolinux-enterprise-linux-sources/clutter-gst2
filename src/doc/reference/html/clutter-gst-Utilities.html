@@ -2,22 +2,21 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Clutter Gst 2.0.12
- Reference Manual: Utilities</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
-<link rel="home" href="index.html" title="Clutter Gst 2.0.12 Reference Manual">
+<title>Utilities: Clutter Gst 2.0.18
+ Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Clutter Gst 2.0.18 Reference Manual">
 <link rel="up" href="ch02.html" title="Clutter Actors And Objects">
 <link rel="prev" href="ClutterGstVideoSink.html" title="ClutterGstVideoSink">
 <link rel="next" href="clutter-gst-Versioning-Macros.html" title="Versioning Macros">
-<meta name="generator" content="GTK-Doc V1.19.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="10"><tr valign="middle">
-<td width="100%" align="left">
-<a href="#" class="shortcut">Top</a>
-                   | 
-                  <a href="#clutter-gst-Utilities.description" class="shortcut">Description</a>
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#clutter-gst-Utilities.description" class="shortcut">Description</a></span>
 </td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
 <td><a accesskey="u" href="ch02.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
@@ -31,33 +30,44 @@
 <h2><span class="refentrytitle"><a name="clutter-gst-Utilities.top_of_page"></a>Utilities</span></h2>
 <p>Utilities — Utility functions for Clutter-Gst.</p>
 </td>
-<td valign="top" align="right"></td>
+<td class="gallery_image" valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv">
-<a name="clutter-gst-Utilities.synopsis"></a><h2>Synopsis</h2>
-<pre class="synopsis"><span class="returnvalue">ClutterInitError</span>    <a class="link" href="clutter-gst-Utilities.html#clutter-gst-init" title="clutter_gst_init ()">clutter_gst_init</a>                    (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
-                                                         <em class="parameter"><code><span class="type">char</span> ***argv</code></em>);
-<span class="returnvalue">ClutterInitError</span>    <a class="link" href="clutter-gst-Utilities.html#clutter-gst-init-with-args" title="clutter_gst_init_with_args ()">clutter_gst_init_with_args</a>          (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
-                                                         <em class="parameter"><code><span class="type">char</span> ***argv</code></em>,
-                                                         <em class="parameter"><code>const <span class="type">char</span> *parameter_string</code></em>,
-                                                         <em class="parameter"><code><span class="type">GOptionEntry</span> *entries</code></em>,
-                                                         <em class="parameter"><code>const <span class="type">char</span> *translation_domain</code></em>,
-                                                         <em class="parameter"><code><span class="type">GError</span> **error</code></em>);
-</pre>
+<div class="refsect1">
+<a name="clutter-gst-Utilities.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a href="/usr/share/gtk-doc/html/clutter/clutter-General.html#ClutterInitError"><span class="returnvalue">ClutterInitError</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="clutter-gst-Utilities.html#clutter-gst-init" title="clutter_gst_init ()">clutter_gst_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="/usr/share/gtk-doc/html/clutter/clutter-General.html#ClutterInitError"><span class="returnvalue">ClutterInitError</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="clutter-gst-Utilities.html#clutter-gst-init-with-args" title="clutter_gst_init_with_args ()">clutter_gst_init_with_args</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
 </div>
 <div class="refsect1">
 <a name="clutter-gst-Utilities.description"></a><h2>Description</h2>
-<p>
-The <span class="application">Clutter-Gst</span> library should be initialized
-with <a class="link" href="clutter-gst-Utilities.html#clutter-gst-init" title="clutter_gst_init ()"><code class="function">clutter_gst_init()</code></a> before it can be used. You should pass pointers to
+<p>The <span class="application">Clutter-Gst</span> library should be initialized
+with <a class="link" href="clutter-gst-Utilities.html#clutter-gst-init" title="clutter_gst_init ()"><code class="function">clutter_gst_init()</code></a> before it can be used. You should pass pointers to
 the main argc and argv variables so that GStreamer, Clutter and Clutter-Gst
 gst can process their own command line options, as shown in the following
-example:
-</p>
-<p>
-</p>
+example:</p>
 <div class="example">
-<a name="id-1.3.5.4.3.1"></a><p class="title"><b>Example 1. Initializing the Clutter-Gst library</b></p>
+<a name="id-1.3.5.4.3"></a><p class="title"><b>Example 1. Initializing the Clutter-Gst library</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -82,21 +92,13 @@ example:
 </div>
 
 </div>
-<p><br class="example-break">
-</p>
-<p>
-It's allowed to pass two NULL pointers to <a class="link" href="clutter-gst-Utilities.html#clutter-gst-init" title="clutter_gst_init ()"><code class="function">clutter_gst_init()</code></a> in case you
+<br class="example-break"><p>It's allowed to pass two NULL pointers to <a class="link" href="clutter-gst-Utilities.html#clutter-gst-init" title="clutter_gst_init ()"><code class="function">clutter_gst_init()</code></a> in case you
 don't want to pass the command line arguments to GStreamer, Clutter and
-Clutter-Gst.
-</p>
-<p>
-You can also use a <span class="type">GOptionEntry</span> array to initialize your own parameters
-as shown in the next code fragment:
-</p>
-<p>
-</p>
+Clutter-Gst.</p>
+<p>You can also use a <a href="https://developer.gnome.org/glib/unstable/glib-Commandline-option-parser.html#GOptionEntry"><span class="type">GOptionEntry</span></a> array to initialize your own parameters
+as shown in the next code fragment:</p>
 <div class="example">
-<a name="id-1.3.5.4.6.1"></a><p class="title"><b>Example 2. Initializing the Clutter-Gst library with additional options</b></p>
+<a name="id-1.3.5.4.6"></a><p class="title"><b>Example 2. Initializing the Clutter-Gst library with additional options</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -146,8 +148,8 @@ as shown in the next code fragment:
    GError           <span class="gtkdoc opt">*</span>error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
    gboolean          result<span class="gtkdoc opt">;</span>
 
-   <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function">g_thread_supported</span> <span class="gtkdoc opt">())</span>
-     <span class="function">g_thread_init</span> <span class="gtkdoc opt">(</span>NULL<span class="gtkdoc opt">);</span>
+   <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="https://developer.gnome.org/glib/unstable/glib-Deprecated-Thread-APIs.html#g-thread-supported">g_thread_supported</a></span> <span class="gtkdoc opt">())</span>
+     <span class="function"><a href="https://developer.gnome.org/glib/unstable/glib-Deprecated-Thread-APIs.html#g-thread-init">g_thread_init</a></span> <span class="gtkdoc opt">(</span>NULL<span class="gtkdoc opt">);</span>
 
    result <span class="gtkdoc opt">=</span> <span class="function"><a href="clutter-gst-Utilities.html#clutter-gst-init-with-args">clutter_gst_init_with_args</a></span> <span class="gtkdoc opt">(&amp;</span>argc<span class="gtkdoc opt">, &amp;</span>argv<span class="gtkdoc opt">,</span>
                                         <span class="string">&quot; - Test YUV frames uploading&quot;</span><span class="gtkdoc opt">,</span>
@@ -155,8 +157,8 @@ as shown in the next code fragment:
 
    <span class="keyword">if</span> <span class="gtkdoc opt">(</span>error<span class="gtkdoc opt">)</span>
      <span class="gtkdoc opt">{</span>
-       <span class="function">g_print</span> <span class="gtkdoc opt">(</span><span class="string">&quot;%s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">);</span>
-       <span class="function">g_error_free</span> <span class="gtkdoc opt">(</span>error<span class="gtkdoc opt">);</span>
+       <span class="function"><a href="https://developer.gnome.org/glib/unstable/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;%s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">);</span>
+       <span class="function"><a href="https://developer.gnome.org/glib/unstable/glib-Error-Reporting.html#g-error-free">g_error_free</a></span> <span class="gtkdoc opt">(</span>error<span class="gtkdoc opt">);</span>
        <span class="keyword">return</span> EXIT_FAILURE<span class="gtkdoc opt">;</span>
      <span class="gtkdoc opt">}</span>
   <span class="gtkdoc opt">...</span>
@@ -167,118 +169,124 @@ as shown in the next code fragment:
 </div>
 
 </div>
-<p><br class="example-break">
-</p>
+<br class="example-break">
 </div>
 <div class="refsect1">
-<a name="clutter-gst-Utilities.details"></a><h2>Details</h2>
+<a name="clutter-gst-Utilities.functions_details"></a><h2>Functions</h2>
 <div class="refsect2">
-<a name="clutter-gst-init"></a><h3>clutter_gst_init ()</h3>
-<pre class="programlisting"><span class="returnvalue">ClutterInitError</span>    clutter_gst_init                    (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
-                                                         <em class="parameter"><code><span class="type">char</span> ***argv</code></em>);</pre>
-<p>
-Utility function to initialize both Clutter and GStreamer.
-</p>
-<p>
-This function should be called before calling any other GLib functions. If
+<a name="clutter-gst-init"></a><h3>clutter_gst_init ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/clutter/clutter-General.html#ClutterInitError"><span class="returnvalue">ClutterInitError</span></a>
+clutter_gst_init (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
+                  <em class="parameter"><code><span class="type">char</span> ***argv</code></em>);</pre>
+<p>Utility function to initialize both Clutter and GStreamer.</p>
+<p>This function should be called before calling any other GLib functions. If
 this is not an option, your program must initialise the GLib thread system
-using <code class="function">g_thread_init()</code> before any other GLib functions are called.
-</p>
-<div class="variablelist"><table border="0" class="variablelist">
+using <a href="https://developer.gnome.org/glib/unstable/glib-Deprecated-Thread-APIs.html#g-thread-init"><code class="function">g_thread_init()</code></a> before any other GLib functions are called.</p>
+<div class="refsect3">
+<a name="id-1.3.5.5.2.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
-<col align="left" valign="top">
-<col>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
 </colgroup>
 <tbody>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>argc</code></em> :</span></p></td>
-<td>The number of arguments in <em class="parameter"><code>argv</code></em>. <span class="annotation">[<a href="http://foldoc.org/inout"><span class="acronym">inout</span></a>]</span>
-</td>
+<td class="parameter_name"><p>argc</p></td>
+<td class="parameter_description"><p> The number of arguments in <em class="parameter"><code>argv</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<a href="http://foldoc.org/inout"><span class="acronym">inout</span></a>]</span></td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>argv</code></em> :</span></p></td>
-<td>A pointer to an array. <span class="annotation">[<a href="http://foldoc.org/array"><span class="acronym">array</span></a> length=argc][<a href="http://foldoc.org/inout"><span class="acronym">inout</span></a>][<a href="http://foldoc.org/allow-none"><span class="acronym">allow-none</span></a>]</span>
-</td>
-</tr>
-<tr>
-<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td>A <span class="type">ClutterInitError</span>.</td>
+<td class="parameter_name"><p>argv</p></td>
+<td class="parameter_description"><p> A pointer to an array. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<a href="http://foldoc.org/array"><span class="acronym">array</span></a> length=argc][<a href="http://foldoc.org/inout"><span class="acronym">inout</span></a>][<a href="http://foldoc.org/allow-none"><span class="acronym">allow-none</span></a>]</span></td>
 </tr>
 </tbody>
 </table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.5.5.2.7"></a><h4>Returns</h4>
+<p> A <a href="/usr/share/gtk-doc/html/clutter/clutter-General.html#ClutterInitError"><span class="type">ClutterInitError</span></a>.</p>
+</div>
 </div>
 <hr>
 <div class="refsect2">
-<a name="clutter-gst-init-with-args"></a><h3>clutter_gst_init_with_args ()</h3>
-<pre class="programlisting"><span class="returnvalue">ClutterInitError</span>    clutter_gst_init_with_args          (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
-                                                         <em class="parameter"><code><span class="type">char</span> ***argv</code></em>,
-                                                         <em class="parameter"><code>const <span class="type">char</span> *parameter_string</code></em>,
-                                                         <em class="parameter"><code><span class="type">GOptionEntry</span> *entries</code></em>,
-                                                         <em class="parameter"><code>const <span class="type">char</span> *translation_domain</code></em>,
-                                                         <em class="parameter"><code><span class="type">GError</span> **error</code></em>);</pre>
-<p>
-This function does the same work as <a class="link" href="clutter-gst-Utilities.html#clutter-gst-init" title="clutter_gst_init ()"><code class="function">clutter_gst_init()</code></a>. Additionally, it
+<a name="clutter-gst-init-with-args"></a><h3>clutter_gst_init_with_args ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/clutter/clutter-General.html#ClutterInitError"><span class="returnvalue">ClutterInitError</span></a>
+clutter_gst_init_with_args (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
+                            <em class="parameter"><code><span class="type">char</span> ***argv</code></em>,
+                            <em class="parameter"><code>const <span class="type">char</span> *parameter_string</code></em>,
+                            <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Commandline-option-parser.html#GOptionEntry"><span class="type">GOptionEntry</span></a> *entries</code></em>,
+                            <em class="parameter"><code>const <span class="type">char</span> *translation_domain</code></em>,
+                            <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
+<p>This function does the same work as <a class="link" href="clutter-gst-Utilities.html#clutter-gst-init" title="clutter_gst_init ()"><code class="function">clutter_gst_init()</code></a>. Additionally, it
 allows you to add your own command line options, and it automatically
 generates nicely formatted --help output. Clutter's and GStreamer's
-<span class="type">GOptionGroup</span>s are added to the set of available options.
-</p>
-<p>
-Your program must initialise the GLib thread system using <code class="function">g_thread_init()</code>
-before any other GLib functions are called.
-</p>
-<div class="variablelist"><table border="0" class="variablelist">
+<a href="https://developer.gnome.org/glib/unstable/glib-Commandline-option-parser.html#GOptionGroup"><span class="type">GOptionGroup</span></a>s are added to the set of available options.</p>
+<p>Your program must initialise the GLib thread system using <a href="https://developer.gnome.org/glib/unstable/glib-Deprecated-Thread-APIs.html#g-thread-init"><code class="function">g_thread_init()</code></a>
+before any other GLib functions are called.</p>
+<div class="refsect3">
+<a name="id-1.3.5.5.3.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
-<col align="left" valign="top">
-<col>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
 </colgroup>
 <tbody>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>argc</code></em> :</span></p></td>
-<td>The number of arguments in <em class="parameter"><code>argv</code></em>. <span class="annotation">[<a href="http://foldoc.org/inout"><span class="acronym">inout</span></a>]</span>
-</td>
+<td class="parameter_name"><p>argc</p></td>
+<td class="parameter_description"><p> The number of arguments in <em class="parameter"><code>argv</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<a href="http://foldoc.org/inout"><span class="acronym">inout</span></a>]</span></td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>argv</code></em> :</span></p></td>
-<td>A pointer to an array. <span class="annotation">[<a href="http://foldoc.org/array"><span class="acronym">array</span></a> length=argc][<a href="http://foldoc.org/inout"><span class="acronym">inout</span></a>][<a href="http://foldoc.org/allow-none"><span class="acronym">allow-none</span></a>]</span>
-</td>
+<td class="parameter_name"><p>argv</p></td>
+<td class="parameter_description"><p> A pointer to an array. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<a href="http://foldoc.org/array"><span class="acronym">array</span></a> length=argc][<a href="http://foldoc.org/inout"><span class="acronym">inout</span></a>][<a href="http://foldoc.org/allow-none"><span class="acronym">allow-none</span></a>]</span></td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>parameter_string</code></em> :</span></p></td>
-<td>a string which is displayed in
+<td class="parameter_name"><p>parameter_string</p></td>
+<td class="parameter_description"><p>a string which is displayed in
 the first line of <code class="option">--help</code> output, after
-<code class="literal"><em class="replaceable"><code>programname</code></em> [OPTION...]</code>
-</td>
+<code class="literal"><em class="replaceable"><code>programname</code></em> [OPTION...]</code></p></td>
+<td class="parameter_annotations"> </td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>entries</code></em> :</span></p></td>
-<td>a <code class="literal">NULL</code>-terminated array of <span class="type">GOptionEntry</span>s
-describing the options of your program</td>
+<td class="parameter_name"><p>entries</p></td>
+<td class="parameter_description"><p>a <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>-terminated array of <a href="https://developer.gnome.org/glib/unstable/glib-Commandline-option-parser.html#GOptionEntry"><span class="type">GOptionEntry</span></a>s
+describing the options of your program</p></td>
+<td class="parameter_annotations"> </td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>translation_domain</code></em> :</span></p></td>
-<td>a translation domain to use for translating
+<td class="parameter_name"><p>translation_domain</p></td>
+<td class="parameter_description"><p>a translation domain to use for translating
 the <code class="option">--help</code> output for the options in <em class="parameter"><code>entries</code></em>
-with <code class="function">gettext()</code>, or <code class="literal">NULL</code>
-</td>
+with <code class="function">gettext()</code>, or <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
+<td class="parameter_annotations"> </td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>error</code></em> :</span></p></td>
-<td>a return location for errors</td>
-</tr>
-<tr>
-<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td>
-<code class="literal">CLUTTER_INIT_SUCCESS</code> on success, a negative integer
-on failure.</td>
+<td class="parameter_name"><p>error</p></td>
+<td class="parameter_description"><p>a return location for errors</p></td>
+<td class="parameter_annotations"> </td>
 </tr>
 </tbody>
 </table></div>
-<p class="since">Since 1.0</p>
 </div>
+<div class="refsect3">
+<a name="id-1.3.5.5.3.7"></a><h4>Returns</h4>
+<p> <a href="/usr/share/gtk-doc/html/clutter/clutter-General.html#CLUTTER-INIT-SUCCESS:CAPS"><code class="literal">CLUTTER_INIT_SUCCESS</code></a> on success, a negative integer
+on failure.</p>
+</div>
+<p class="since">Since: 1.0</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="clutter-gst-Utilities.other_details"></a><h2>Types and Values</h2>
 </div>
 </div>
 <div class="footer">
-<hr>
-          Generated by GTK-Doc V1.19.1</div>
+<hr>Generated by GTK-Doc V1.24</div>
 </body>
 </html>

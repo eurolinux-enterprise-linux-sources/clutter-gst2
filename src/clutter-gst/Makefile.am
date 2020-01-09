@@ -122,7 +122,9 @@ if HAVE_INTROSPECTION
 BUILT_GIRSOURCES =
 
 ClutterGst-@CLUTTER_GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libclutter-gst-@CLUTTER_GST_API_VERSION@.la
-	$(QUIET_GEN)$(INTROSPECTION_SCANNER) -v \
+	$(QUIET_GEN) \
+		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no DISPLAY="" \
+		$(INTROSPECTION_SCANNER) -v \
 		--namespace ClutterGst --nsversion=@CLUTTER_GST_API_VERSION@ \
 		$(INCLUDES) \
 		$(AM_CPPFLAGS) \
@@ -140,7 +142,7 @@ ClutterGst-@CLUTTER_GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libclutter-gs
 		--include=GstVideo-1.0 \
 		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-audio-1.0` \
 		--include=GstAudio-1.0 \
-		--add-init-section="clutter_gst_init(0,NULL);" \
+		--add-init-section="gst_init(0,NULL);" \
 		--library=libclutter-gst-@CLUTTER_GST_API_VERSION@.la \
 		--libtool="${LIBTOOL}" \
 		--output $@ \
